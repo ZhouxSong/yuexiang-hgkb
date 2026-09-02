@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国宏观经济仪表盘 · 2026-08-31</title>
+<style>
+  :root{
+    --bg:#f2f4f8; --panel:#ffffff; --border:#e2e7ef; --border2:#eef1f6;
+    --ink:#16202e; --ink2:#3d4a5c; --ink3:#7c8798;
+    --navy:#152744; --navy2:#1f3a66; --accent:#2456a6;
+    --up:#c92a2a; --up-bg:#fdecec; --down:#148a5c; --down-bg:#e6f5ef;
+    --warn:#b7791f; --warn-bg:#fdf3e3; --flat:#64748b;
+    --gold:#c9a227;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.55;padding-bottom:40px;}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
+
+  /* ===== 顶栏 ===== */
+  header{background:linear-gradient(135deg,#101d36 0%,#1c3560 60%,#254779 100%);color:#fff;padding:26px 0 22px;border-bottom:3px solid var(--gold);}
+  .head-row{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  h1{font-size:24px;font-weight:700;letter-spacing:1px;}
+  h1 .sub{display:block;font-size:12px;font-weight:400;color:#a9bdd9;margin-top:6px;letter-spacing:.5px;}
+  .head-meta{display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);color:#dce6f5;font-size:12px;padding:4px 12px;border-radius:20px;}
+  .chip b{color:#fff;font-weight:600;}
+
+  /* ===== 结论横幅 ===== */
+  .verdict{margin-top:18px;background:linear-gradient(135deg,#20355c,#2c4c82);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;}
+  .verdict .thermo{flex:0 0 auto;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f6c86a,#e08a2d);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 0 4px rgba(255,255,255,.12);}
+  .verdict p{font-size:15px;color:#f0f4fb;}
+  .verdict p b{color:#ffd98a;}
+  .verdict .tag{font-size:11px;color:#cdd9ec;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 7px;margin-right:6px;}
+
+  /* ===== 区块 ===== */
+  section{margin-top:26px;}
+  .sec-title{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
+  .sec-title h2{font-size:17px;color:var(--navy);font-weight:700;}
+  .sec-title h2::before{content:"";display:inline-block;width:5px;height:16px;background:var(--navy);border-radius:2px;margin-right:8px;vertical-align:-2px;}
+  .sec-title .note{font-size:12px;color:var(--ink3);}
+
+  /* ===== 指标卡片 ===== */
+  .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+  @media(max-width:1100px){.cards{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.cards{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 15px;box-shadow:0 1px 3px rgba(20,40,80,.05);display:flex;flex-direction:column;gap:8px;}
+  .card .k-head{display:flex;justify-content:space-between;align-items:center;}
+  .card .k-name{font-size:13px;font-weight:700;color:var(--navy);}
+  .card .k-period{font-size:11px;color:var(--ink3);}
+  .card .k-val{font-size:26px;font-weight:800;letter-spacing:-.5px;}
+  .card .k-val small{font-size:13px;font-weight:600;color:var(--ink2);margin-left:3px;}
+  .delta{display:inline-flex;align-items:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:5px;}
+  .delta.up{color:var(--up);background:var(--up-bg);}
+  .delta.down{color:var(--down);background:var(--down-bg);}
+  .delta.flat{color:var(--flat);background:#eef1f5;}
+  .k-sub{font-size:12px;color:var(--ink2);}
+  .k-sub b{color:var(--ink);}
+  .k-note{font-size:11.5px;color:var(--ink3);border-top:1px dashed var(--border);padding-top:7px;margin-top:auto;}
+  .badge-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border:1px solid #ecd3a3;font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;}
+  .badge-ok{display:inline-block;background:var(--down-bg);color:var(--down);border:1px solid #bfe3d3;font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;}
+
+  /* ===== 扩展指标迷你卡片 ===== */
+  .cards-mini{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+  @media(max-width:1100px){.cards-mini{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.cards-mini{grid-template-columns:1fr;}}
+  .mini{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 13px;box-shadow:0 1px 3px rgba(20,40,80,.05);}
+  .mini .m-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;gap:6px;}
+  .mini .m-name{font-size:12.5px;font-weight:700;color:var(--navy);}
+  .mini .m-period{font-size:10.5px;color:var(--ink3);white-space:nowrap;}
+  .mini .m-val{font-size:20px;font-weight:800;letter-spacing:-.4px;}
+  .mini .m-val small{font-size:11.5px;font-weight:600;color:var(--ink2);margin-left:2px;}
+  .mini .m-sub{font-size:11px;color:var(--ink2);margin-top:3px;}
+  .mini .m-sub b{color:var(--ink);}
+  .mini .m-note{font-size:10.5px;color:var(--ink3);margin-top:6px;border-top:1px dashed var(--border);padding-top:5px;}
+  .group-label{font-size:13px;font-weight:700;color:var(--navy2);margin:18px 0 10px;display:flex;align-items:center;gap:8px;}
+  .group-label::before{content:"";width:4px;height:13px;background:var(--accent);border-radius:2px;display:inline-block;}
+  .spark{margin-top:2px;}
+
+  /* ===== 图表区 ===== */
+  .charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:900px){.charts{grid-template-columns:1fr;}}
+  .chart-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:0 1px 3px rgba(20,40,80,.05);}
+  .chart-box h3{font-size:14px;color:var(--navy);margin-bottom:2px;}
+  .chart-box .src{font-size:11px;color:var(--ink3);margin-bottom:8px;}
+  .legend{display:flex;gap:14px;font-size:11px;color:var(--ink2);margin-top:6px;flex-wrap:wrap;}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px;}
+  svg{display:block;width:100%;height:auto;}
+  svg text{font-family:"Segoe UI","Microsoft YaHei",sans-serif;}
+
+  /* ===== 表格 ===== */
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;font-size:13px;box-shadow:0 1px 3px rgba(20,40,80,.05);}
+  .tbl-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 3px rgba(20,40,80,.05);}
+  .tbl-wrap table{border:none;box-shadow:none;}
+  th{background:var(--navy);color:#fff;font-weight:600;text-align:left;padding:9px 12px;font-size:12.5px;white-space:nowrap;}
+  td{padding:8px 12px;border-top:1px solid var(--border2);vertical-align:top;color:var(--ink2);}
+  tbody tr:nth-child(even){background:#f8fafc;}
+  td b{color:var(--ink);}
+  .v-up{color:var(--up);font-weight:700;}
+  .v-down{color:var(--down);font-weight:700;}
+  .v-na{color:#a8b2c1;}
+  .pill{display:inline-block;font-size:11px;padding:1px 8px;border-radius:10px;font-weight:600;white-space:nowrap;}
+  .pill.done{background:#e8f0fb;color:var(--accent);}
+  .pill.wait{background:var(--warn-bg);color:var(--warn);}
+  .pill.focus{background:var(--up-bg);color:var(--up);}
+
+  /* ===== 口径与风险 ===== */
+  .two-col{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;box-shadow:0 1px 3px rgba(20,40,80,.05);}
+  .panel h3{font-size:14px;color:var(--navy);margin-bottom:8px;}
+  .panel ul{padding-left:18px;font-size:12.5px;color:var(--ink2);}
+  .panel li{margin-bottom:5px;}
+  footer{margin-top:30px;text-align:center;font-size:11.5px;color:var(--ink3);}
+  code{background:#eef2f7;border:1px solid #dde4ee;border-radius:4px;padding:1px 6px;font-size:11.5px;font-family:Consolas,monospace;color:#2c4c82;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <h1>中国宏观经济仪表盘
+        <span class="sub">China Macro Dashboard · 核心指标速览与事件前瞻</span>
+      </h1>
+      <div class="head-meta">
+        <span class="chip">数据时点 <b>2026-08-31</b></span>
+        <span class="chip">数据来源 <b>NeoData 金融搜索（单一来源）</b></span>
+        <span class="chip">口径 <b>国家统计局 / 中国人民银行</b></span>
+      </div>
+    </div>
+    <div class="verdict">
+      <div class="thermo">🌡</div>
+      <p><span class="tag">经济温度</span><b>「内需景气边际回升、外部紧缩压力重新抬头」</b> —— 本期增量：① <b>8月 PMI 今晨发布（8/31）回升至 49.8%</b>（较 7月 +0.6），新订单 50.6% 重返荣枯线上方，但制造业总体仍在收缩区间；非制造业持平 49.0%、综合产出指数 49.5%。② 海外转向鹰派——美国 7月 PCE（8/26 发布）同比 <b>3.7%</b>、核心同比 <b>3.3%</b>，均高于预期；沃什 8/28 杰克逊霍尔首秀放鹰（"通胀未明确回落前还有工作要做"，拒绝前瞻指引），<b>9月加息概率从讲话前约 35% 升至 50–60%</b>（CME FedWatch 约 56%）。③ 10 年国债收益率由降转升——<b>1.6949%</b>（8/28，较 8/21 回升约 1.1bp），市场对宽货币的定价有所回吐。④ 英伟达 8/27 财报大超预期（营收 +106%），8/28 大涨 8.7% 创新高，AI 资本开支周期获验证。人民币汇率保持平稳：中间价 8/31 报 <b>6.78</b>。本周焦点：9/4 美国 8月非农（市场预期 +5.8万、失业率 4.1%），将检验"加息还是放缓"。</p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ================= 核心指标卡片 ================= -->
+<section>
+  <div class="sec-title">
+    <h2>核心指标卡片</h2>
+    <span class="note">各指标均为 NeoData 可查到的最新一期官方发布值；颜色规则：数值回升＝红、回落＝绿（红升绿降）</span>
+  </div>
+  <div class="cards">
+
+    <!-- GDP -->
+    <div class="card">
+      <div class="k-head"><span class="k-name">GDP 当季同比</span><span class="k-period">2026Q2 · 统计局</span></div>
+      <div class="k-val" style="color:var(--up)">+4.3<small>%</small></div>
+      <span class="delta down">▼ 较Q1回落 0.7 个百分点</span>
+      <div class="k-sub">当季现价 GDP <b>36,151.1 亿元</b>；环比 <b>+0.9%</b>；上半年累计同比 <b>+4.7%</b></div>
+      <div class="k-note">解读：仍在全年目标区间内，但较一季度 5.0% 的"开门红"放缓，环比动能减弱。</div>
+    </div>
+
+    <!-- CPI -->
+    <div class="card">
+      <div class="k-head"><span class="k-name">CPI 同比</span><span class="k-period">2026年7月 · 统计局</span></div>
+      <div class="k-val" style="color:var(--up)">+0.5<small>%</small></div>
+      <span class="delta down">▼ 涨幅较6月回落 0.5 个百分点</span>
+      <div class="k-sub">环比 <b>-0.1%</b>（降幅收窄）；核心CPI同比 <b>+0.9%</b>；PPI同比 <b>+3.5%</b></div>
+      <div class="k-note">解读：汽油价格涨幅大幅回落拖累总水平，核心通胀平稳，物价总体温和。</div>
+    </div>
+
+    <!-- PMI -->
+    <div class="card">
+      <div class="k-head"><span class="k-name">制造业 PMI</span><span class="k-period">2026年8月 · 统计局（8/31发布）</span></div>
+      <div class="k-val" style="color:var(--up)">49.8<small>%</small></div>
+      <span class="delta up">▲ 较7月回升 0.6 个百分点</span>
+      <div class="k-sub"><span class="badge-warn">⚠ 仍处 50 荣枯线下方</span>；新订单 <b>50.6%</b>（+2.1）重返扩张</div>
+      <div class="k-note">解读：景气收缩但边际改善——生产 50.4%、新订单 50.6%、供应商配送 50.1% 均高于临界点；大型企业 50.6% 回升至线上，中小型企业仍收缩。</div>
+    </div>
+
+    <!-- M2 -->
+    <div class="card">
+      <div class="k-head"><span class="k-name">M2 同比</span><span class="k-period">2026年7月末 · 央行</span></div>
+      <div class="k-val" style="color:var(--up)">+7.7<small>%</small></div>
+      <span class="delta down">▼ 较6月末回落 0.3 个百分点（6月 +8.0%）</span>
+      <div class="k-sub">M2余额 <b>355.51 万亿元</b>；M1同比 <b>+4.0%</b>（持平）；M1-M2 剪刀差收窄至 -0.3pct</div>
+      <div class="k-note">解读：货币增速边际放缓但仍高于名义GDP，M1持平、剪刀差收窄反映企业经营活跃度尚可。</div>
+    </div>
+
+    <!-- 社融 -->
+    <div class="card">
+      <div class="k-head"><span class="k-name">社会融资规模</span><span class="k-period">2026年7月 · 央行</span></div>
+      <div class="k-val" style="color:var(--up)">+7.4<small>% 存量同比</small></div>
+      <span class="delta down">▼ 7月人民币贷款减少 <b>5,896 亿元</b>，信贷罕见负增</span>
+      <div class="k-sub">7月增量 <b>1,401.7 亿元</b>（初值14,100），环比 -58%；前7月累计增量 <b>22.25 万亿元</b>；存量人民币贷款余额同比 +5.2%</div>
+      <div class="k-note">解读：信贷"供强需弱"，社融靠企业债券（+9.2%）、股票融资与贷款核销支撑；有效融资需求不足信号明显。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 扩展指标 ================= -->
+<section>
+  <div class="sec-title">
+    <h2>扩展指标（生产·消费·投资·外贸·就业·利率·海外）</h2>
+    <span class="note">本轮新增，全部为 NeoData 实查值；部分指标全国总值未召回时以可用口径展示并标注</span>
+  </div>
+
+  <div class="group-label">生产与需求</div>
+  <div class="cards-mini">
+    <div class="mini">
+      <div class="m-head"><span class="m-name">规模以上工业增加值</span><span class="m-period">2026年7月 · 统计局</span></div>
+      <div class="m-val" style="color:var(--up)">+4.5<small>%</small></div>
+      <div class="m-sub">7月当月同比（6月 +5.3%）；环比 <b>+0.11%</b>；1-7月累计 <b>+5.3%</b>；采矿业 -4.2%、制造业 +5.5%</div>
+      <div class="m-note">解读：生产动能放缓（较6月回落0.8pct），采矿业负增长拖累明显，制造业仍是主力。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">社会消费品零售总额</span><span class="m-period">2026年7月 · 统计局</span></div>
+      <div class="m-val" style="color:var(--up)">+0.6<small>%</small></div>
+      <div class="m-sub">7月当月同比（6月 +1.0%）；总额 <b>39,022 亿元</b>；1-7月累计 <b>+1.2%</b>；除汽车外 +2.5%</div>
+      <div class="m-note">解读：消费进一步走弱，商品零售仅 +0.5%、餐饮 +1.4%；以旧换新政策退坡效应与汽车类拖累显现。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">固定资产投资</span><span class="m-period">2026年1-7月 · 统计局</span></div>
+      <div class="m-val" style="color:var(--down)">-6.7<small>%</small></div>
+      <div class="m-sub">1-7月累计同比（不含农户），总额 <b>26.03 万亿元</b>；扣除房地产后 <b>-3.7%</b>；房地产开发投资 <b>-19.2%</b></div>
+      <div class="m-note">解读：降幅较上半年（-5.7%）扩大，7月单月环比 -1.42%；基建 -3.6% 转负，制造业 -1.7%，仅高技术产业 +5.0%。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">出口（美元计）</span><span class="m-period">2026年7月 · 海关总署</span></div>
+      <div class="m-val" style="color:var(--up)">+23.9<small>%</small></div>
+      <div class="m-sub">7月当期同比；5月 <b>+19.4%</b> → 6月 <b>+27.0%</b> → 7月 +23.9%；1-7月累计同比 <b>+18.5%</b></div>
+      <div class="m-note">解读：出口保持高景气，是稳增长的关键支撑；但 PMI 新出口订单偏弱，需警惕抢出口退坡。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">进口（美元计）</span><span class="m-period">2026年7月 · 海关总署</span></div>
+      <div class="m-val" style="color:var(--up)">+27.5<small>%</small></div>
+      <div class="m-sub">7月当期同比；人民币计口径 <b>+21.2%</b>；6月人民币计同比 +29.4%</div>
+      <div class="m-note">解读：进口高增反映内需修复与大宗价格因素，贸易顺差格局下汇率压力有限。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">70城新房价格</span><span class="m-period">2026年7月 · 统计局（8/17发布）</span></div>
+      <div class="m-val" style="color:var(--down)">-0.2<small>% 环比</small></div>
+      <div class="m-sub">同比 <b>-3.4%</b>；分线看：一线 <b>0.0%</b>、二线 <b>-0.1%</b>、三线 <b>-0.3%</b>（环比）</div>
+      <div class="m-note">解读：房价延续调整、一线率先企稳；与房地产开发投资 -19.2% 互相印证，地产仍是最大拖累项。</div>
+    </div>
+  </div>
+
+  <div class="group-label">就业 · 利率 · 海外</div>
+  <div class="cards-mini">
+    <div class="mini">
+      <div class="m-head"><span class="m-name">城镇调查失业率</span><span class="m-period">2026年7月 · 统计局</span></div>
+      <div class="m-val" style="color:var(--warn)">5.2<small>%</small></div>
+      <div class="m-sub">全国口径，较6月上升 0.2pct；31个大城市 <b>5.2%</b>；外来农业户籍 <b>4.9%</b>；1-7月均值 5.2%</div>
+      <div class="m-note">解读：毕业季因素致失业率季节性回升，总体仍在合理区间；本轮全国口径已召回，无需大城市口径替代。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">LPR 报价</span><span class="m-period">2026-08-20 · 全国银行间同业拆借中心</span></div>
+      <div class="m-val" style="color:var(--accent)">3.00<small>% / 3.50%</small></div>
+      <div class="m-sub">1年期 <b>3.0%</b>、5年期以上 <b>3.5%</b>，8月报价连续第 2 个月维持不变</div>
+      <div class="m-note">解读：政策利率按兵不动，信贷"供强需弱"背景下总量降息暂未落地；6月新发企业贷款加权平均利率约 3%，处于历史低位。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">10年期国债收益率</span><span class="m-period">2026-08-28 · 中债</span></div>
+      <div class="m-val" style="color:var(--up)">1.69<small>%</small></div>
+      <div class="m-sub">8/28 收 <b>1.6949%</b>；8/24 1.6794% → 8/28 1.6949%，一周回升约 1.5bp（8/21 低点 1.6839% 后止降转升）</div>
+      <div class="m-note">解读：长端利率止跌回升，与海外鹰派重定价、宽货币预期边际收敛相呼应；同期人民币中间价 6.78，汇率平稳。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">美元兑人民币中间价</span><span class="m-period">2026-08-31 · 外汇交易中心</span></div>
+      <div class="m-val" style="color:var(--accent)">6.78<small></small></div>
+      <div class="m-sub">8/31 报 <b>6.78</b>（+17bp）；过去两周持续在 <b>6.78–6.79</b> 窄幅波动，汇率稳定、年内累计升值</div>
+      <div class="m-note">解读：美元指数走强（沃什鹰派讲话后升至 99.7）背景下人民币依然坚挺，出口高景气与资本流入提供支撑。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">美国非农就业</span><span class="m-period">2026年7月 · 8/7发布</span></div>
+      <div class="m-val" style="color:var(--down)">-2.3<small>万人</small></div>
+      <div class="m-sub">7月新增非农 <b>-2.3 万人</b>；失业率 <b>4.1%</b>（前值口径见风险提示）</div>
+      <div class="m-note">解读：非农罕见负增长、劳动力市场降温，是 CPI 公布后 Fed 加息预期回落的重要背景。</div>
+    </div>
+    <div class="mini">
+      <div class="m-head"><span class="m-name">美国 ISM 制造业 PMI</span><span class="m-period">2026年7月</span></div>
+      <div class="m-val" style="color:var(--up)">55.6<small></small></div>
+      <div class="m-sub">较6月回升 <b>+2.3</b>，大幅高于市场预期 53.9，创 2022年5月以来新高</div>
+      <div class="m-note">解读：中美制造业景气背离（美强中弱），美国就业与通胀组合增加 Fed 决策难度。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 趋势图 ================= -->
+<section>
+  <div class="sec-title">
+    <h2>近期趋势</h2>
+    <span class="note">仅绘制 NeoData 实际返回的期数；缺口期数不臆测补画</span>
+  </div>
+  <div class="charts">
+
+    <!-- GDP 季度同比 -->
+    <div class="chart-box">
+      <h3>GDP 当季同比（不变价，%）</h3>
+      <div class="src">国家统计局 · 2025Q3–2026Q2</div>
+      <svg viewBox="0 0 560 210">
+        <!-- 网格 -->
+        <line x1="50" y1="30" x2="540" y2="30" stroke="#eef1f6"/>
+        <line x1="50" y1="70" x2="540" y2="70" stroke="#eef1f6"/>
+        <line x1="50" y1="110" x2="540" y2="110" stroke="#eef1f6"/>
+        <line x1="50" y1="150" x2="540" y2="150" stroke="#eef1f6"/>
+        <line x1="50" y1="180" x2="540" y2="180" stroke="#c9d2df"/>
+        <text x="44" y="34" font-size="10" fill="#98a3b3" text-anchor="end">6.0</text>
+        <text x="44" y="74" font-size="10" fill="#98a3b3" text-anchor="end">5.0</text>
+        <text x="44" y="114" font-size="10" fill="#98a3b3" text-anchor="end">4.0</text>
+        <text x="44" y="154" font-size="10" fill="#98a3b3" text-anchor="end">3.0</text>
+        <!-- 柱: 值 v → y = 180 - (v-3)*50/3 区间 3~6 映射 180~30; 简化: y=180-(v-3)*50 -->
+        <!-- 2025Q3 4.8 → h=90 y=90 -->
+        <rect x="80" y="90" width="66" height="90" rx="4" fill="#8fa8cc"/>
+        <text x="113" y="82" font-size="12" font-weight="700" fill="#3d4a5c" text-anchor="middle">4.8</text>
+        <!-- 2025Q4 4.5 → h=75 y=105 -->
+        <rect x="200" y="105" width="66" height="75" rx="4" fill="#8fa8cc"/>
+        <text x="233" y="97" font-size="12" font-weight="700" fill="#3d4a5c" text-anchor="middle">4.5</text>
+        <!-- 2026Q1 5.0 → h=100 y=80 -->
+        <rect x="320" y="80" width="66" height="100" rx="4" fill="#3d66a3"/>
+        <text x="353" y="72" font-size="12" font-weight="700" fill="#152744" text-anchor="middle">5.0</text>
+        <!-- 2026Q2 4.3 → h=65 y=115 -->
+        <rect x="440" y="115" width="66" height="65" rx="4" fill="#c92a2a"/>
+        <text x="473" y="107" font-size="12" font-weight="800" fill="#c92a2a" text-anchor="middle">4.3</text>
+        <!-- x轴标签 -->
+        <text x="113" y="197" font-size="11" fill="#7c8798" text-anchor="middle">2025Q3</text>
+        <text x="233" y="197" font-size="11" fill="#7c8798" text-anchor="middle">2025Q4</text>
+        <text x="353" y="197" font-size="11" fill="#7c8798" text-anchor="middle">2026Q1</text>
+        <text x="473" y="197" font-size="11" fill="#7c8798" text-anchor="middle">2026Q2</text>
+      </svg>
+      <div class="legend"><span><i style="background:#3d66a3"></i>当期值</span><span><i style="background:#c92a2a"></i>最新期</span><span style="color:#7c8798">Q1→Q2 回落 0.7pct，环比 +0.9%</span></div>
+    </div>
+
+    <!-- PMI -->
+    <div class="chart-box">
+      <h3>制造业 PMI（季调，%）— 50 为荣枯线</h3>
+      <div class="src">国家统计局 · 2026年3月–8月</div>
+      <svg viewBox="0 0 560 210">
+        <line x1="50" y1="180" x2="540" y2="180" stroke="#c9d2df"/>
+        <!-- y映射: v∈[48,51] → y = 180 - (v-48)*50 ; 50线 y=80 -->
+        <line x1="50" y1="80" x2="540" y2="80" stroke="#e0a13c" stroke-width="1.6" stroke-dasharray="6 4"/>
+        <text x="544" y="84" font-size="10" fill="#b7791f" font-weight="700">50</text>
+        <text x="44" y="84" font-size="10" fill="#98a3b3" text-anchor="end">50.0</text>
+        <text x="44" y="184" font-size="10" fill="#98a3b3" text-anchor="end">48.0</text>
+        <!-- 数据: 3月50.4→y60, 4月50.3→y65, 5月50.0→y80, 6月50.3→y65, 7月49.2→y120, 8月49.8→y90 -->
+        <!-- x: 80,170,260,350,440,530 -->
+        <polyline points="80,60 170,65 260,80 350,65 440,120 530,90" fill="none" stroke="#2456a6" stroke-width="2.4"/>
+        <circle cx="80" cy="60" r="4.5" fill="#fff" stroke="#2456a6" stroke-width="2"/>
+        <circle cx="170" cy="65" r="4.5" fill="#fff" stroke="#2456a6" stroke-width="2"/>
+        <circle cx="260" cy="80" r="4.5" fill="#fff" stroke="#2456a6" stroke-width="2"/>
+        <circle cx="350" cy="65" r="4.5" fill="#fff" stroke="#2456a6" stroke-width="2"/>
+        <circle cx="440" cy="120" r="4.5" fill="#fff" stroke="#2456a6" stroke-width="2"/>
+        <circle cx="530" cy="90" r="5.5" fill="#c92a2a" stroke="#fff" stroke-width="2"/>
+        <text x="80" y="48" font-size="10.5" fill="#3d4a5c" text-anchor="middle">50.4</text>
+        <text x="170" y="53" font-size="10.5" fill="#3d4a5c" text-anchor="middle">50.3</text>
+        <text x="260" y="68" font-size="10.5" fill="#3d4a5c" text-anchor="middle">50.0</text>
+        <text x="350" y="53" font-size="10.5" fill="#3d4a5c" text-anchor="middle">50.3</text>
+        <text x="440" y="140" font-size="11" fill="#3d4a5c" text-anchor="middle">49.2</text>
+        <text x="530" y="108" font-size="11" font-weight="800" fill="#c92a2a" text-anchor="middle">49.8</text>
+        <text x="80" y="197" font-size="11" fill="#7c8798" text-anchor="middle">3月</text>
+        <text x="170" y="197" font-size="11" fill="#7c8798" text-anchor="middle">4月</text>
+        <text x="260" y="197" font-size="11" fill="#7c8798" text-anchor="middle">5月</text>
+        <text x="350" y="197" font-size="11" fill="#7c8798" text-anchor="middle">6月</text>
+        <text x="440" y="197" font-size="11" fill="#7c8798" text-anchor="middle">7月</text>
+        <text x="530" y="197" font-size="11" fill="#7c8798" text-anchor="middle">8月</text>
+      </svg>
+      <div class="legend"><span><i style="background:#e0a13c"></i>荣枯线 50</span><span><i style="background:#c92a2a;border-radius:50%"></i>最新期回升但仍在线下</span><span style="color:#7c8798">新订单 50.6% 重返扩张，景气连续两月收缩后边际改善</span></div>
+    </div>
+
+    <!-- CPI -->
+    <div class="chart-box">
+      <h3>CPI 环比（%）与同比最新值</h3>
+      <div class="src">国家统计局 · 环比为2026年4月–7月；同比仅6月(+1.0%)、7月(+0.5%)两期可由本服务取回</div>
+      <svg viewBox="0 0 560 210">
+        <!-- 0线 -->
+        <line x1="50" y1="100" x2="540" y2="100" stroke="#c9d2df"/>
+        <text x="44" y="104" font-size="10" fill="#98a3b3" text-anchor="end">0.0</text>
+        <!-- 环比柱: v*90 → 高度; 4月+0.3→h27, 5月-0.1→h9, 6月-0.3→h27, 7月-0.1→h9 -->
+        <rect x="85" y="73" width="52" height="27" rx="3" fill="#c92a2a"/>
+        <text x="111" y="66" font-size="11" font-weight="700" fill="#c92a2a" text-anchor="middle">+0.3</text>
+        <rect x="205" y="100" width="52" height="9" rx="3" fill="#148a5c"/>
+        <text x="231" y="124" font-size="11" font-weight="700" fill="#148a5c" text-anchor="middle">-0.1</text>
+        <rect x="325" y="100" width="52" height="27" rx="3" fill="#148a5c"/>
+        <text x="351" y="142" font-size="11" font-weight="700" fill="#148a5c" text-anchor="middle">-0.3</text>
+        <rect x="445" y="100" width="52" height="9" rx="3" fill="#148a5c"/>
+        <text x="471" y="124" font-size="11" font-weight="700" fill="#148a5c" text-anchor="middle">-0.1</text>
+        <text x="111" y="197" font-size="11" fill="#7c8798" text-anchor="middle">4月</text>
+        <text x="231" y="197" font-size="11" fill="#7c8798" text-anchor="middle">5月</text>
+        <text x="351" y="197" font-size="11" fill="#7c8798" text-anchor="middle">6月</text>
+        <text x="471" y="197" font-size="11" fill="#7c8798" text-anchor="middle">7月</text>
+        <!-- 同比标注 -->
+        <text x="351" y="30" font-size="11" fill="#3d4a5c" text-anchor="middle">同比：6月 <tspan font-weight="800" fill="#c92a2a">+1.0%</tspan> → 7月 <tspan font-weight="800" fill="#148a5c">+0.5%</tspan>（涨幅回落0.5pct）</text>
+      </svg>
+      <div class="legend"><span><i style="background:#c92a2a"></i>环比为正</span><span><i style="background:#148a5c"></i>环比为负</span><span style="color:#7c8798">核心CPI同比 +0.9% 保持平稳</span></div>
+    </div>
+
+    <!-- M2 余额 + 社融存量同比 -->
+    <div class="chart-box">
+      <h3>M2 余额（万亿元）与社融存量同比（%）</h3>
+      <div class="src">中国人民银行 · M2余额2026年2月–7月末；社融存量同比2026年4月–7月末</div>
+      <svg viewBox="0 0 560 210">
+        <line x1="50" y1="170" x2="540" y2="170" stroke="#c9d2df"/>
+        <!-- M2余额柱: h=(v-348)*15+10 -->
+        <!-- 2月349.22 h=28 y=142 -->
+        <rect x="58" y="142" width="54" height="28" rx="3" fill="#a9bdd9"/>
+        <text x="85" y="134" font-size="10.5" fill="#3d4a5c" text-anchor="middle">349.2</text>
+        <!-- 3月353.86 h=98 y=72 -->
+        <rect x="138" y="72" width="54" height="98" rx="3" fill="#a9bdd9"/>
+        <text x="165" y="64" font-size="10.5" fill="#3d4a5c" text-anchor="middle">353.9</text>
+        <!-- 4月353.04 h=86 y=84 -->
+        <rect x="218" y="84" width="54" height="86" rx="3" fill="#a9bdd9"/>
+        <text x="245" y="76" font-size="10.5" fill="#3d4a5c" text-anchor="middle">353.0</text>
+        <!-- 5月353.67 h=95 y=75 -->
+        <rect x="298" y="75" width="54" height="95" rx="3" fill="#a9bdd9"/>
+        <text x="325" y="67" font-size="10.5" fill="#3d4a5c" text-anchor="middle">353.7</text>
+        <!-- 6月356.71 h=141 y=29 -->
+        <rect x="378" y="29" width="54" height="141" rx="3" fill="#3d66a3"/>
+        <text x="405" y="21" font-size="10.5" fill="#152744" text-anchor="middle">356.7</text>
+        <!-- 7月355.51 h=123 y=47 -->
+        <rect x="458" y="47" width="54" height="123" rx="3" fill="#152744"/>
+        <text x="485" y="39" font-size="11" font-weight="800" fill="#152744" text-anchor="middle">355.5</text>
+        <text x="85" y="187" font-size="11" fill="#7c8798" text-anchor="middle">2月</text>
+        <text x="165" y="187" font-size="11" fill="#7c8798" text-anchor="middle">3月</text>
+        <text x="245" y="187" font-size="11" fill="#7c8798" text-anchor="middle">4月</text>
+        <text x="325" y="187" font-size="11" fill="#7c8798" text-anchor="middle">5月</text>
+        <text x="405" y="187" font-size="11" fill="#7c8798" text-anchor="middle">6月</text>
+        <text x="485" y="187" font-size="11" fill="#7c8798" text-anchor="middle">7月</text>
+        <!-- 社融存量同比折线: 4月7.8 5月7.7 6月7.4 7月7.4 → y=170-(v-7.2)*120: 98/110/146/146 -->
+        <polyline points="245,98 325,110 405,146 485,146" fill="none" stroke="#e0a13c" stroke-width="2.2"/>
+        <circle cx="245" cy="98" r="4" fill="#e0a13c"/>
+        <circle cx="325" cy="110" r="4" fill="#e0a13c"/>
+        <circle cx="405" cy="146" r="4" fill="#e0a13c"/>
+        <circle cx="485" cy="146" r="4.5" fill="#e0a13c" stroke="#fff" stroke-width="1.5"/>
+        <text x="245" y="90" font-size="10" fill="#b7791f" text-anchor="middle" font-weight="700">7.8%</text>
+        <text x="325" y="102" font-size="10" fill="#b7791f" text-anchor="middle" font-weight="700">7.7%</text>
+        <text x="405" y="160" font-size="10" fill="#b7791f" text-anchor="middle" font-weight="700">7.4%</text>
+        <text x="485" y="160" font-size="10" fill="#b7791f" text-anchor="middle" font-weight="700">7.4%</text>
+      </svg>
+      <div class="legend"><span><i style="background:#152744"></i>M2余额（万亿，柱）</span><span><i style="background:#e0a13c"></i>社融存量同比（线，示意叠加）</span><span style="color:#7c8798">7月末 M2 同比 +7.7%（较6月回落0.3pct）</span></div>
+    </div>
+
+    <!-- 出口同比走势 -->
+    <div class="chart-box">
+      <h3>出口同比增速（以美元计，%）</h3>
+      <div class="src">海关总署 · 2026年5月–7月</div>
+      <svg viewBox="0 0 560 210">
+        <line x1="50" y1="60" x2="540" y2="60" stroke="#eef1f6"/>
+        <line x1="50" y1="100" x2="540" y2="100" stroke="#eef1f6"/>
+        <line x1="50" y1="140" x2="540" y2="140" stroke="#eef1f6"/>
+        <line x1="50" y1="180" x2="540" y2="180" stroke="#c9d2df"/>
+        <text x="44" y="64" font-size="10" fill="#98a3b3" text-anchor="end">30</text>
+        <text x="44" y="104" font-size="10" fill="#98a3b3" text-anchor="end">25</text>
+        <text x="44" y="144" font-size="10" fill="#98a3b3" text-anchor="end">20</text>
+        <text x="44" y="184" font-size="10" fill="#98a3b3" text-anchor="end">15</text>
+        <!-- v∈[15,30] → y = 180-(v-15)*8 -->
+        <!-- 5月 19.4 → y=145 h=35 -->
+        <rect x="110" y="145" width="72" height="35" rx="4" fill="#8fa8cc"/>
+        <text x="146" y="137" font-size="12" font-weight="700" fill="#3d4a5c" text-anchor="middle">+19.4</text>
+        <!-- 6月 27.0 → y=84 h=96 -->
+        <rect x="245" y="84" width="72" height="96" rx="4" fill="#3d66a3"/>
+        <text x="281" y="76" font-size="12" font-weight="700" fill="#152744" text-anchor="middle">+27.0</text>
+        <!-- 7月 23.9 → y=109 h=71 -->
+        <rect x="380" y="109" width="72" height="71" rx="4" fill="#c92a2a"/>
+        <text x="416" y="101" font-size="12" font-weight="800" fill="#c92a2a" text-anchor="middle">+23.9</text>
+        <text x="146" y="197" font-size="11" fill="#7c8798" text-anchor="middle">5月</text>
+        <text x="281" y="197" font-size="11" fill="#7c8798" text-anchor="middle">6月</text>
+        <text x="416" y="197" font-size="11" fill="#7c8798" text-anchor="middle">7月</text>
+      </svg>
+      <div class="legend"><span><i style="background:#3d66a3"></i>历史期</span><span><i style="background:#c92a2a"></i>最新期</span><span style="color:#7c8798">1-7月累计同比 +18.5%，出口仍是稳增长关键支撑</span></div>
+    </div>
+
+    <!-- 8月 PMI 全景 -->
+    <div class="chart-box">
+      <h3>8月 PMI 全景对比（%）</h3>
+      <div class="src">国家统计局 · 2026年8月（8/31发布） · 虚线为荣枯线 50</div>
+      <svg viewBox="0 0 560 235">
+        <!-- 荣枯线 x: v=50 → x=245 -->
+        <line x1="245" y1="12" x2="245" y2="222" stroke="#e0a13c" stroke-width="1.6" stroke-dasharray="6 4"/>
+        <text x="245" y="233" font-size="10" fill="#b7791f" text-anchor="middle" font-weight="700">50</text>
+        <!-- x = 115 + (v-45)*26; bar width = (v-45)*26, 从x=115起 -->
+        <!-- 1 制造业 49.8 w=124.8 → 绿(低于线) -->
+        <text x="110" y="31" font-size="11" fill="#3d4a5c" text-anchor="end">制造业PMI</text>
+        <rect x="115" y="20" width="125" height="14" rx="3" fill="#148a5c"/>
+        <text x="248" y="31" font-size="11" font-weight="800" fill="#148a5c">49.8</text>
+        <!-- 2 生产指数 50.4 w=140.4 → 红(高于线) -->
+        <text x="110" y="57" font-size="11" fill="#3d4a5c" text-anchor="end">制造业生产指数</text>
+        <rect x="115" y="46" width="140" height="14" rx="3" fill="#c92a2a"/>
+        <text x="263" y="57" font-size="11" font-weight="800" fill="#c92a2a">50.4</text>
+        <!-- 3 新订单 50.6 w=145.6 → 红 -->
+        <text x="110" y="83" font-size="11" fill="#3d4a5c" text-anchor="end">制造业新订单指数</text>
+        <rect x="115" y="72" width="146" height="14" rx="3" fill="#c92a2a"/>
+        <text x="269" y="83" font-size="11" font-weight="800" fill="#c92a2a">50.6</text>
+        <!-- 4 服务业 49.3 w=111.8 → 绿 -->
+        <text x="110" y="109" font-size="11" fill="#3d4a5c" text-anchor="end">服务业商务活动</text>
+        <rect x="115" y="98" width="112" height="14" rx="3" fill="#148a5c"/>
+        <text x="235" y="109" font-size="11" font-weight="800" fill="#148a5c">49.3</text>
+        <!-- 5 建筑业 46.9 w=49.4 → 绿 -->
+        <text x="110" y="135" font-size="11" fill="#3d4a5c" text-anchor="end">建筑业商务活动</text>
+        <rect x="115" y="124" width="49" height="14" rx="3" fill="#148a5c"/>
+        <text x="172" y="135" font-size="11" font-weight="800" fill="#148a5c">46.9</text>
+        <!-- 6 非制造业 49.0 w=104 → 绿 -->
+        <text x="110" y="161" font-size="11" fill="#3d4a5c" text-anchor="end">非制造业商务活动</text>
+        <rect x="115" y="150" width="104" height="14" rx="3" fill="#148a5c"/>
+        <text x="227" y="161" font-size="11" font-weight="800" fill="#148a5c">49.0</text>
+        <!-- 7 综合 49.5 w=117 → 绿 -->
+        <text x="110" y="187" font-size="11" fill="#3d4a5c" text-anchor="end">综合PMI产出指数</text>
+        <rect x="115" y="176" width="117" height="14" rx="3" fill="#148a5c"/>
+        <text x="240" y="187" font-size="11" font-weight="800" fill="#148a5c">49.5</text>
+        <!-- 8 业务活动预期 55.0 w=260 → 红 -->
+        <text x="110" y="213" font-size="11" fill="#3d4a5c" text-anchor="end">业务活动预期指数</text>
+        <rect x="115" y="202" width="260" height="14" rx="3" fill="#c92a2a"/>
+        <text x="383" y="213" font-size="11" font-weight="800" fill="#c92a2a">55.0</text>
+      </svg>
+      <div class="legend"><span><i style="background:#c92a2a"></i>高于荣枯线（扩张）</span><span><i style="background:#148a5c"></i>低于荣枯线（收缩）</span><span style="color:#7c8798">8月制造业回升：生产、新订单重返线上；非制造业投入品价格 51.1%（+1.4）</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 事件日历 ================= -->
+<section>
+  <div class="sec-title">
+    <h2>经济事件日历</h2>
+    <span class="note">NeoData 资讯与日历召回整理；中国例行发布时点为惯例推断，以官方预告为准</span>
+  </div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th style="width:22%">事件</th><th style="width:14%">时间</th><th style="width:18%">前值</th><th style="width:22%">预测</th><th style="width:14%">现值</th><th style="width:10%">状态</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>美国 8月 非农就业</b></td>
+        <td>2026-09-04 周五 20:30（北京时间）</td>
+        <td>7月新增 <b class="v-down">-2.3万</b>、失业率 <b>4.1%</b></td>
+        <td>路透调查：+5.8万、失业率 4.1%；强数据或进一步推高加息押注</td>
+        <td class="v-na">待发布</td>
+        <td><span class="pill focus">★ 焦点</span></td>
+      </tr>
+      <tr>
+        <td><b>美联储理事沃勒通胀讲话</b></td>
+        <td>2026-09-03 周四 20:30（北京时间）</td>
+        <td>—</td>
+        <td>9月议息前最重要的官员讲话，市场关注鹰鸽定调</td>
+        <td class="v-na">待发表</td>
+        <td><span class="pill focus">★ 焦点</span></td>
+      </tr>
+      <tr>
+        <td><b>中国 8月 CPI / PPI</b></td>
+        <td>2026年9月上旬（惯例，约9/9-9/10）</td>
+        <td>7月 CPI同比 <b class="v-up">+0.5%</b>、PPI同比 +3.5%</td>
+        <td>—</td>
+        <td class="v-na">待发布</td>
+        <td><span class="pill wait">待发布</span></td>
+      </tr>
+      <tr>
+        <td><b>美国 8月 CPI</b></td>
+        <td>2026-09-11</td>
+        <td>7月 CPI同比 <b>3.4%</b>、核心同比 <b>2.5%</b></td>
+        <td>沃什定下"数据驱动"框架，8月CPI或为9月决议前最后关键通胀数据</td>
+        <td class="v-na">待发布</td>
+        <td><span class="pill focus">★ 焦点</span></td>
+      </tr>
+      <tr>
+        <td><b>9月 FOMC 利率决议</b></td>
+        <td>2026-09-16</td>
+        <td>区间 <b>3.50%–3.75%</b></td>
+        <td>沃什鹰派首秀后"五五开"：CME FedWatch 加息25bp概率约 <b>56%</b>（讲话前约35%）；Kalshi 48%、Polymarket 约49-50%</td>
+        <td class="v-na">待公布</td>
+        <td><span class="pill focus">★ 焦点</span></td>
+      </tr>
+      <tr>
+        <td><b>LPR 报价（1年期/5年期）</b></td>
+        <td>2026-09-20 前后（惯例每月20日）</td>
+        <td>8/20 报价 1年期 3.0%、5年期 3.5%</td>
+        <td>国内流动性宽松与海外紧缩的权衡窗口</td>
+        <td class="v-na">待公布</td>
+        <td><span class="pill wait">待公布</span></td>
+      </tr>
+      <tr>
+        <td><b>中国 8月 制造业/非制造业 PMI</b></td>
+        <td>2026-08-31 已发布</td>
+        <td>7月制造业 <b class="v-down">49.2%</b></td>
+        <td>—</td>
+        <td>制造业 <b class="v-up">49.8%</b>（+0.6）；非制造业 <b>49.0%</b>（持平）；综合 <b class="v-up">49.5%</b>（+0.2）；新订单 <b class="v-up">50.6%</b> 重返线上</td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>沃什杰克逊霍尔主旨演讲</b></td>
+        <td>2026-08-28 已发表（北京时间22:00）</td>
+        <td>—</td>
+        <td>市场期待明确利率路径</td>
+        <td><b class="v-up">鹰派</b>：重申2%目标"坚定固定"，"还有工作要做"；拒绝前瞻指引。讲话后 2年美债收益率 4.22%→4.35%，美元指数升至 99.7，黄金跌近3%；9月加息概率 35%→50-60%</td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>杰克逊霍尔全球央行年会</b></td>
+        <td>2026-08-27 至 08-29 已闭幕</td>
+        <td>—</td>
+        <td>主题"金融创新：对支付与政策的影响"</td>
+        <td>会议聚焦金融创新与央行政策，政策信号集中于沃什讲话</td>
+        <td><span class="pill done">已闭幕</span></td>
+      </tr>
+      <tr>
+        <td><b>英伟达 2027 财年 Q2 财报</b></td>
+        <td>2026-08-27 凌晨（北京时间）已披露</td>
+        <td>—</td>
+        <td>AI 资本开支周期"终极验证"</td>
+        <td>营收 <b class="v-up">962亿美元</b>（同比 +106%、环比 +18%）；数据中心 <b class="v-up">890亿</b>（+117%）；Q3 指引约 1,080亿；8/28 股价大涨 8.7% 创新高</td>
+        <td><span class="pill done">已披露</span></td>
+      </tr>
+      <tr>
+        <td><b>美国 7月 PCE 物价指数</b></td>
+        <td>2026-08-26 已发布</td>
+        <td>6月整体同比 <b>3.7%</b>、核心同比 <b>3.3%</b></td>
+        <td>整体同比 3.6%、核心同比 3.2%（FactSet一致预期）</td>
+        <td>整体同比 <b class="v-up">3.7%</b>（持平6月、超预期）；核心同比 <b class="v-up">3.3%</b>（持平）；发布后 9月加息概率 36%→约40%</td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>LPR 报价（1年期/5年期）</b></td>
+        <td>2026-08-20 已公布</td>
+        <td>7月 1年期 3.0%、5年期 3.5%</td>
+        <td>市场普遍预期维持不变</td>
+        <td><b>3.00% / 3.50%</b>（连续维持不变）</td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>中国 7月 经济活动数据（工业增加值/社零/固投）</b></td>
+        <td>2026-08-17 已发布</td>
+        <td>6月工业 <b class="v-up">+5.3%</b>、社零 <b class="v-up">+1.0%</b>；1-6月固投 <b class="v-down">-5.7%</b></td>
+        <td>—</td>
+        <td>工业 <b class="v-up">+4.5%</b>；社零 <b class="v-up">+0.6%</b>；1-7月固投 <b class="v-down">-6.7%</b>；失业率 <b>5.2%</b></td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>中国 7月 金融数据（M2/社融/信贷）</b></td>
+        <td>2026-08-14 已发布</td>
+        <td>M2同比 <b class="v-up">8.0%</b>；社融存量同比 <b class="v-up">7.4%</b>（6月末）</td>
+        <td>M2全年预测值 7.93%（聚源，8/13口径）</td>
+        <td>M2同比 <b class="v-up">7.7%</b>；社融存量同比 <b>7.4%</b>；社融增量 <b>14,017亿</b>；信贷 <b class="v-down">-5,896亿</b></td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>美国 7月 CPI（同比）</b></td>
+        <td>2026-08-12 已发布</td>
+        <td>6月 CPI同比 <b>3.5%</b>；核心CPI同比 2.6%</td>
+        <td>CPI同比 3.4%；核心CPI环比 +0.2%（符合预期）</td>
+        <td><b>同比 3.4%</b>（环比 +0.1%）；核心同比 <b>2.5%</b>、环比 +0.2%</td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>中国 7月 CPI / PPI</b></td>
+        <td>2026-08-09 已发布</td>
+        <td>6月 CPI同比 <b class="v-up">+1.0%</b></td>
+        <td>—</td>
+        <td><b class="v-up">+0.5%</b>（PPI <b class="v-up">+3.5%</b>）</td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>美国 7月 非农就业</b></td>
+        <td>2026-08-07 已发布</td>
+        <td>6月非农就业季调 <b>17.2万</b>（日历口径）</td>
+        <td>市场关注就业降温程度</td>
+        <td><b class="v-down">-2.3万</b>；失业率 <b>4.1%</b></td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>中国 7月 进出口（美元计）</b></td>
+        <td>2026-08-07 已发布</td>
+        <td>6月出口同比 <b class="v-up">+27.0%</b>、进口（人民币计）+29.4%</td>
+        <td>—</td>
+        <td>出口 <b class="v-up">+23.9%</b>；进口（美元计）<b class="v-up">+27.5%</b></td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+      <tr>
+        <td><b>中国 7月 制造业PMI</b></td>
+        <td>2026-07-31 已发布</td>
+        <td>6月 <b>50.3%</b></td>
+        <td>—</td>
+        <td><b class="v-down">49.2%</b>（跌破荣枯线）</td>
+        <td><span class="pill done">已发布</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ================= 复现查询清单 ================= -->
+<section>
+  <div class="sec-title">
+    <h2>复现查询清单</h2>
+    <span class="note">以下自然语言查询均可在 NeoData 金融搜索服务中复现本次取数</span>
+  </div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th style="width:42%">查询语句（NeoData 原样输入）</th><th style="width:16%">通道</th><th>取回的关键结果</th></tr></thead>
+    <tbody>
+      <tr><td><code>中国最新一期GDP当季值和同比增速，以及最近几个季度GDP同比增速</code></td><td>结构化API</td><td>GDP(现价):年 2025年 140.19万亿元；各季度同比见下行查询</td></tr>
+      <tr><td><code>GDP不变价当期同比季度 2025年三季度…/…2026年二季度</code>（按季分次查询）</td><td>结构化API</td><td>GDP(不变价):当期同比:季 → 2025Q3 <b>4.8%</b>、2025Q4 <b>4.5%</b>、2026Q1 <b>5.0%</b>、2026Q2 <b>4.3%</b>；2026Q2 现价当季值 36,151.1亿元、环比 +0.9%</td></tr>
+      <tr><td><code>中国居民消费价格指数CPI同比涨幅最新月度数据</code> 及 <code>统计局发布2026年7月份居民消费价格…</code></td><td>API+资讯</td><td>7月CPI同比 <b>+0.5%</b>、环比 <b>-0.1%</b>、核心CPI同比 +0.9%；6月同比 +1.0%；环比序列 4月+0.3/5月-0.1/6月-0.3/7月-0.1</td></tr>
+      <tr><td><code>中国制造业PMI最新月度数值，最近6个月制造业采购经理指数</code></td><td>结构化API</td><td>制造业PMI:季调:月 → 2月49.0 / 3月50.4 / 4月50.3 / 5月50.0 / 6月50.3 / <b>7月49.2</b>；7月大型49.5、中型49.7</td></tr>
+      <tr><td><code>M2货币供应量同比增速月度数据</code></td><td>结构化API</td><td>货币和准货币(M2):同比:月 6月末 <b>8.0%</b>；M2余额 356.71万亿元；M1同比 +4.0%；2–6月末余额序列</td></tr>
+      <tr><td><code>社会融资规模存量当月同比增速 最新</code> 及 <code>社会融资规模增量:当期值:月…</code></td><td>结构化API</td><td>社融存量同比 4月7.8%→5月7.7%→<b>6月7.4%</b>；6月增量 3,364.5亿元（初值33,600）；上半年累计增量 20.84万亿元</td></tr>
+      <tr><td><code>美联储FOMC议息会议 联邦基金利率决议 前值 预测值 现值</code></td><td>资讯召回</td><td>6月会议维持 3.50%–3.75%、点阵图上调年底至3.8%；7月会议 9:3 维持不变</td></tr>
+      <tr><td><code>2026年7月美联储FOMC会议 利率决议结果…</code></td><td>API+资讯</td><td>7/29 维持区间 3.50%–3.75%；3票委主张加息25bp；联邦基金有效利率 3.63%（7/31）</td></tr>
+      <tr><td><code>美国7月CPI同比 8月12日公布 核心CPI</code></td><td>资讯召回</td><td><b>本次更新新增</b>：7月CPI同比 3.4%（6月3.5%）、环比 +0.1%；核心CPI同比 2.5%、环比 +0.2%，均符合预期；发布后 FedWatch 9月维持不变概率升至约 59.9%</td></tr>
+      <tr><td><code>2026年7月末 M2余额 同比增长 7月社会融资规模增量 当月</code></td><td>API+资讯（双通道）</td><td><b>本次更新确认</b>：中国 7 月金融数据截至 8/13 尚未发布/未入库，M2、社融仍沿用 6 月末口径（M2 同比 8.0%、余额 356.71 万亿元；社融存量 462.06 万亿元、同比 7.4%）</td></tr>
+      <tr><td><code>9月美联储FOMC会议时间 8月中国CPI发布时间 宏观经济日历…</code></td><td>资讯召回</td><td>Jackson Hole 8/27–29；美8月非农 9/4；美8月CPI 9/11；美7月CPI 8/12发布</td></tr>
+      <tr><td><code>中国规模以上工业增加值最新同比增速 2026年6月 7月</code></td><td>结构化API</td><td><b>扩充新增</b>：6月工业增加值当月同比 <b>+5.3%</b>、1-6月累计 +5.4%；上半年装备制造业 +9.3%、高技术制造业 +13.3%</td></tr>
+      <tr><td><code>社会消费品零售总额:当月同比:月 2026年</code></td><td>结构化API</td><td><b>扩充新增</b>：6月社零当月同比 <b>+1.0%</b>、1-6月累计 +1.3%；除汽车外 +3.0%、商品零售 +0.9%、城镇 +0.8%</td></tr>
+      <tr><td><code>固定资产投资累计同比 2026年6月 全国</code> 及资讯交叉验证</td><td>API+资讯</td><td><b>扩充新增</b>：1-6月固投累计同比 <b>-5.7%</b>（总额 22.64 万亿元）、扣除房地产后 -2.7%；知识产权产品投资 +9.4%</td></tr>
+      <tr><td><code>出口金额当期同比 统计截止20260630 海关总署</code> / <code>进口金额以人民币计当期同比 出口金额以美元计当期同比 统计截止20260731</code></td><td>结构化API</td><td><b>扩充新增</b>：出口（美元计）5月+19.4%→6月+27.0%→<b>7月+23.9%</b>，1-7月累计 +18.5%；进口（美元计）7月 <b>+27.5%</b>（人民币计 +21.2%）</td></tr>
+      <tr><td><code>城镇调查失业率:全国:月 2026</code></td><td>结构化API</td><td><b>扩充新增</b>：31个大城市 6月 <b>5.0%</b>、16-24岁 14.9%、外来农业户籍 4.8%；全国总值未召回，以大城市口径展示</td></tr>
+      <tr><td><code>LPR贷款市场报价利率最新 1年期 5年期</code></td><td>结构化API</td><td><b>扩充新增</b>：2026-07-20 LPR 1年期 <b>3.0%</b>、5年期 <b>3.5%</b>，维持不变</td></tr>
+      <tr><td><code>中国10年期国债收益率最新水平</code></td><td>结构化API</td><td><b>扩充新增</b>：中债 10年期国债收益率 8/12 <b>1.7141%</b>；近两周区间 1.707%–1.735%</td></tr>
+      <tr><td><code>非制造业商务活动指数 综合PMI产出指数 2026年7月</code></td><td>结构化API</td><td><b>扩充新增</b>：7月非制造业商务活动 <b>49.0</b>、综合PMI产出指数 <b>49.3</b>、建筑业 47.0、服务业业务活动预期 56.0</td></tr>
+      <tr><td><code>美国7月非农就业新增人数 失业率</code></td><td>结构化API</td><td><b>扩充新增</b>：美国7月新增非农 <b>-2.3万人</b>、失业率 4.1%（8/7发布）</td></tr>
+      <tr><td><code>美国ISM制造业PMI 7月 55.6</code></td><td>结构化API</td><td><b>扩充新增</b>：美国7月制造业PMI <b>55.6</b>、环比 +2.3，高于预期 53.9</td></tr>
+      <tr><td><code>中国2026年7月金融统计数据 M2同比增长 社融规模增量 人民银行</code></td><td>结构化API</td><td><b>8/17更新</b>：7月社融增量 <b>14,017亿元</b>（初值14,100）；人民币贷款 <b>-5,896亿元</b>；社融-M2剪刀差 -0.3pct</td></tr>
+      <tr><td><code>社会融资规模存量同比增速 统计截止2026年7月31日 465万亿</code></td><td>结构化API</td><td><b>8/17更新</b>：7月末社融存量同比 <b>7.4%</b>（与6月持平）；人民币贷款存量同比 5.2%；企业债券 9.2%</td></tr>
+      <tr><td><code>7月末M2余额同比增长 社融 人民币贷款 减少 8月14日 金融数据</code></td><td>资讯召回</td><td><b>8/17更新</b>：7月末M2同比 <b>7.7%</b>（较6月回落0.3pct）、余额 355.51万亿元；M1同比 +4.0%持平；前7月社融增量累计 22.25万亿元、人民币贷款增加 10.38万亿元</td></tr>
+      <tr><td><code>7月份规模以上工业增加值同比增长多少 统计局8月发布</code></td><td>资讯召回</td><td><b>8/17更新</b>：7月工业增加值同比 <b>+4.5%</b>、环比 +0.11%、1-7月累计 +5.3%；采矿业 -4.2%、制造业 +5.5%</td></tr>
+      <tr><td><code>7月份社会消费品零售总额同比增长 统计局 8月17日</code></td><td>资讯召回</td><td><b>8/17更新</b>：7月社零同比 <b>+0.6%</b>（39,022亿元）；1-7月累计 +1.2%；除汽车外 +2.5%</td></tr>
+      <tr><td><code>1-7月份全国固定资产投资同比下降 统计局 房地产开发投资 8月17日</code></td><td>资讯召回</td><td><b>8/17更新</b>：1-7月固投 <b>-6.7%</b>（26.03万亿元）；扣除房地产后 -3.7%；房地产开发投资 -19.2%；基建 -3.6%、制造业 -1.7%、高技术产业 +5.0%</td></tr>
+      <tr><td><code>7月份全国城镇调查失业率 统计局 8月17日 就业</code></td><td>资讯召回</td><td><b>8/17更新</b>：7月全国城镇调查失业率 <b>5.2%</b>（较6月上升0.2pct，全国口径首次召回）；31个大城市 5.2%；外来农业户籍 4.9%</td></tr>
+      <tr><td><code>LPR贷款市场报价利率最新 1年期 5年期 2026年8月</code></td><td>结构化API</td><td><b>8/24更新</b>：8/20 LPR 1年期 <b>3.0%</b>、5年期 <b>3.5%</b>，连续维持不变</td></tr>
+      <tr><td><code>中国10年期国债收益率最新水平 美元兑人民币中间价</code></td><td>结构化API</td><td><b>8/31更新</b>：10年国债 8/28 <b>1.6949%</b>（8/21 低点 1.6839% → 8/28 1.6949%，止跌回升约 1.5bp）；美元兑人民币中间价 8/31 <b>6.78</b>（+17bp，持续 6.78–6.79 窄幅波动）</td></tr>
+      <tr><td><code>2026年8月中国制造业PMI 统计局8月31日发布 非制造业商务活动指数</code></td><td>资讯召回（当日发布）</td><td><b>8/31新增</b>：8月制造业PMI <b>49.8%</b>（+0.6）；新订单 50.6%（+2.1）、生产 50.4%（+0.5）；大型 50.6%、中型 49.4%、小型 47.9%；非制造业 49.0%（持平）、建筑业 46.9%、服务业 49.3%；综合产出指数 49.5%（+0.2）</td></tr>
+      <tr><td><code>美国7月PCE物价指数 8月26日公布 核心PCE同比 实际数据</code></td><td>资讯召回</td><td><b>8/31新增</b>：7月PCE同比 <b>3.7%</b>（持平6月、超市场预期3.6%）、环比 +0.2%；核心PCE同比 <b>3.3%</b>（持平）、环比 +0.2%；发布后 9月加息概率由约36%升至约40%；二季度GDP修正增速维持 1.5%</td></tr>
+      <tr><td><code>沃什 杰克逊霍尔 8月28日演讲 内容 美联储 政策 结果</code></td><td>资讯召回</td><td><b>8/31新增</b>：沃什首秀演讲《In Our Time》释放谨慎偏鹰信号——重申2%通胀目标"坚定固定"、称夏季数据"并未显示潜在通胀实质性改善"、"还有工作要做"，并拒绝前瞻指引；讲话后 2年美债收益率 4.22%→4.35%、美元指数升至 99.7、黄金跌近3%</td></tr>
+      <tr><td><code>美联储9月加息概率 最新 市场定价 联邦基金期货 沃什讲话后</code></td><td>资讯召回</td><td><b>8/31更新</b>：沃什讲话后 9月加息25bp概率从约35%升至 50–60%——CME FedWatch 约 56%、Kalshi 48%、Polymarket 约49–50%；市场重新押注年内加息一次、截至2027年3月或两次</td></tr>
+      <tr><td><code>NVIDIA英伟达最新季度财报 营收 数据中心业务 业绩公布</code></td><td>资讯召回</td><td><b>8/31新增</b>：英伟达 2027财年Q2（8/27披露）营收 <b>962亿美元</b>（同比+106%）、数据中心 890亿（+117%）；Q3指引约1,080亿；8/28 股价大涨 8.7% 至 5.5万亿美元市值创历史新高</td></tr>
+      <tr><td><code>9月宏观经济日历 美国8月非农就业 CPI发布时间 中国8月CPI 9月FOMC</code></td><td>资讯召回</td><td><b>8/31新增</b>：9/2 JOLTS职位空缺、9/2 博通财报、9/3 ADP+沃勒通胀讲话、9/4 20:30 美国8月非农（预期+5.8万、失业率4.1%）、9月上旬中国8月物价、9/11 美国8月CPI、9/16 FOMC</td></tr>
+      <tr><td><code>70个大中城市商品住宅销售价格 7月份 变动情况 统计局发布</code></td><td>结构化API</td><td><b>8/24更新</b>：7月70城新房价格环比 <b>-0.2%</b>、同比 <b>-3.4%</b>；分线环比：一线 0.0%、二线 -0.1%、三线 -0.3%；8月数据预计 9月中旬发布</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ================= 口径与风险 ================= -->
+<section>
+  <div class="sec-title">
+    <h2>口径说明与风险提示</h2>
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <h3>数据口径</h3>
+      <ul>
+        <li><b>单一数据源：</b>本页全部数据取自 NeoData 金融搜索服务（腾讯 copilot 代理通道），未混用其他数据源；底层原始来源为国家统计局、中国人民银行及聚源数据库。</li>
+        <li><b>GDP：</b>同比增速为不变价口径（国家统计局"GDP(不变价):当期同比:季"）；当季值为现价名义值；2026Q2 为初步核算数，后续可能修订。</li>
+        <li><b>CPI/PPI：</b>同比/环比均为全国口径月度数据；最新期为 2026年7月（8月9日发布）。</li>
+        <li><b>PMI：</b>国家统计局官方制造业 PMI（季调），50 为荣枯线；最新期为 2026年8月（8月31日当天发布，资讯通道当日召回）。高技术/装备制造业 PMI 为央行口径补充参考，8月分项暂未入库。</li>
+        <li><b>M2/社融：</b>最新期已更新至 2026年7月末（8月14日发布）。M2 同比 7.7% 取自央行 7月金融统计数据报道口径（结构化库中"货币和准货币(M2):同比:月"7月值暂未入库，经"社融-M2剪刀差"反推一致：7.4-(-0.3)=7.7%）；社融增量"当期值"14,017 亿元为最终值（初值 14,100）。</li>
+        <li><b>工业/消费/投资/就业：</b>7月数据均为 8月17日国家统计局发布口径；工业增加值、社零为当月同比，固定资产投资为 1-7月累计同比（不含农户，按可比口径），失业率 5.2% 为全国城镇调查失业率（本期已直接召回全国口径）。</li>
+        <li><b>美国 CPI：</b>7月数据为美国劳工统计局 CPI-U 口径（8/12 发布）；FedWatch 概率为 8/12 数据公布后的 CME 口径。</li>
+        <li><b>进出口：</b>海关总署口径，出口/进口当期同比；表中出口以美元计、进口同时标注美元计与人民币计；7月数据已于 8/7 发布。</li>
+        <li><b>利率：</b>LPR 为全国银行间同业拆借中心 2026-08-20 报价（下期 9/20 前后）；10 年期国债收益率为中债日频数据（8/28）；美元兑人民币中间价为外汇交易中心 8/31 报价。</li>
+        <li><b>美联储预期：</b>9月利率路径表述来自 NeoData 资讯召回（沃什 8/28 演讲、PCE 公布后的市场定价综述，含 CME FedWatch/Kalshi/Polymarket），属市场观点，非官方口径；各平台概率口径略有差异。</li>
+        <li><b>海外：</b>美国非农、ISM 制造业 PMI 为 NeoData 全球宏观指标库口径；非农 7 月为负值系数据原始返回，解读时请注意其波动性。</li>
+        <li><b>取数缺口：</b>2026年2–5月 CPI 同比、3–5月 M2 同比实际值、社融存量绝对值，以及本期尝试的 1–7月财政收支、美国 7月 PPI，经多轮换措辞重试后 NeoData 均未返回，未做推测填补；7月 70城房价已于本轮成功取回并纳入扩展卡片。</li>
+        <li><b>事件日历：</b>美国数据日期来自 NeoData 资讯召回（含 9/16 FOMC 会期）；中国例行发布时点（8月31日PMI、9月上旬物价）为发布惯例推断，具体以官方预告为准。</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>风险提示</h3>
+      <ul>
+        <li>宏观数据存在初值修订可能（尤其 GDP 季度核算），后续修订可能改变本页结论。</li>
+        <li>美联储政策路径不确定性显著上升：沃什 8/28 杰克逊霍尔首秀释放谨慎偏鹰信号（重申2%目标、"还有工作要做"、拒绝前瞻指引），叠加 7月PCE同比 3.7% 高于预期，市场已从"9月按兵不动共识"转向"五五开"——CME FedWatch 加息25bp概率约 56%（讲话前约35%）。若 9/4 非农强劲、9/11 CPI 继续偏高，9/16 FOMC 加息可能成为现实；反之弱数据则可能重新降温预期，定价或快速反复。</li>
+        <li>沃什明确拒绝前瞻指引、主张让市场依据数据自行判断，意味着后续每次数据发布都可能引发利率预期与汇市、贵金属的大幅重定价，波动性结构性抬升。</li>
+        <li>信贷数据罕见负增：7月人民币贷款减少 5,896 亿元，叠加固投降幅扩大、社零降至 +0.6%，反映实体融资与内需同步收缩，若政策未及时补位，三季度 GDP 增速可能进一步下探。</li>
+        <li>投资与消费双双偏弱（1-7月固投 -6.7%、7月社零 +0.6%），房地产开发投资 -19.2% 仍是最大拖累；地产降幅若继续扩大，稳增长压力将显著上升。</li>
+        <li>出口是当前最强支撑但 PMI 新出口订单已低于临界点，若海外需求回落或贸易摩擦反复，出口韧性存不确定性。</li>
+        <li>美国经济"通胀偏热 + 就业偏弱"的组合持续：7月PCE超预期、7月非农罕见负增长、ISM 却处高位，滞胀式组合令美联储决策难度加大，也是市场定价快速反复的根源。</li>
+        <li>8月制造业PMI回升至 49.8% 属边际改善信号，但仍处收缩区间，且新订单改善的持续性有待 9月数据与高频指标验证；内需修复尚不能确认。</li>
+        <li>本仪表盘仅为数据整理与研究参考，不构成任何投资建议。</li>
+        <li>更新时间：2026-08-31；此后发布的数据请以最新官方口径为准。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>中国宏观经济仪表盘 · 数据来源：NeoData 金融搜索（单一来源） · 更新于 2026-08-31 · 仅供研究参考，不构成投资建议</footer>
+</div>
+</body>
+</html>
